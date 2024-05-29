@@ -1,5 +1,7 @@
 class ProductsController < ApplicationController
   before_action :set_product, only: %i[ show update destroy ]
+  skip_before_action :authorized, only: [:index, :show]
+  before_action :permission_admin, only: [:create, :update, :destroy]
 
   # GET /products
   def index
