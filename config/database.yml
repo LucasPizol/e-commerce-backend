@@ -4,18 +4,19 @@ default: &default
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASSWORD'] %>
   host: <%= ENV['DB_HOST'] %>
+  port: <%= ENV['DB_PORT'] %>
 
 development:
   <<: *default
-  database: <%= ENV['DB_DEVELOPMENT_NAME'] %>
+  database: <%= ENV['DB_NAME'] %>
 
 test:
   <<: *default
-  database: <%= ENV['DB_DEVELOPMENT_NAME'] %>
+  database: <%= ENV['DB_NAME'] %>
   
 production:
   <<: *default
-  database: <%= ENV['DB_PRODUCTION_NAME'] %>
+  database: <%= ENV['DB_NAME'] %>
   username: <%= ENV['DB_USER'] %>
   password: <%= ENV['DB_PASSWORD'] %>
   host: <%= ENV['DB_HOST'] %>

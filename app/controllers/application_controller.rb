@@ -5,19 +5,18 @@ Dotenv.load
 class ApplicationController < ActionController::API
     before_action :authorized
 
-
     def authorized
       header = request.headers['Authorization']
       token = header.split(' ')[1] if header
 
-      begin
-        decoded = JWT.decode(token, ENV["JWT_SECRET"], true, algorithm: ENV["JWT_HASH_ALGORITHM"])
+      decoded = TokenService.decode(token)
 
-        id = decoded[0]['id']
-        @current_user = User.find(id)
-      rescue JWT::DecodeError
-        render json: { error: 'Unauthorized' }, status: :unauthorized
+      if decoded.nil?
+        return render json: { error: 'Unauthorized' }, status: :unauthorized
       end
+
+      id = decoded[0]['id']
+      @current_user = User.find(id)
     end
 
     def permission_admin

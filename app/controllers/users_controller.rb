@@ -1,7 +1,6 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
   skip_before_action :authorized, only: [:index, :create]
-
   # GET /users
   def index
     @users = User.all
@@ -18,10 +17,19 @@ class UsersController < ApplicationController
   def create
     @user = User.new(user_params)
 
-    if @user.save
-      render json: @user, status: :created, location: @user
-    else
-      render json: @user.errors, status: :unprocessable_entity
+
+    begin
+      if @user.valid?
+        if @user.save
+          render json: @user, status: :created, location: @user
+        else
+          render json: @user.errors, status: :unprocessable_entity
+        end
+      else
+        render json: {error: 'Invalid params'}, status: :bad_request
+      end
+    rescue ActiveRecord::NotNullViolation
+      render json: {error: "Invalid params"}, status: :bad_request
     end
   end
 
@@ -37,7 +45,7 @@ class UsersController < ApplicationController
   # DELETE /users/1
   def destroy
     @user.destroy!
-  end
+  end    
 
   private
     # Use callbacks to share common setup or constraints between actions.
