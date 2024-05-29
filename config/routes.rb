@@ -1,5 +1,8 @@
 Rails.application.routes.draw do
   post 'login', to: 'auth#login'
+  post 'register', to: 'register#register'
+  post 'checkout', to: 'payment#checkout'
+
   resources :users
   resources :products
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html

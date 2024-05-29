@@ -1,6 +1,13 @@
 class UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
   skip_before_action :authorized, only: [:index, :create]
+
+  require './app/use_cases/auth/register_use_case'
+
+  def initialize 
+    @register_use_case = RegisterUseCase.new
+  end
+
   # GET /users
   def index
     @users = User.all
@@ -11,26 +18,6 @@ class UsersController < ApplicationController
   # GET /users/1
   def show
     render json: @user
-  end
-
-  # POST /users
-  def create
-    @user = User.new(user_params)
-
-
-    begin
-      if @user.valid?
-        if @user.save
-          render json: @user, status: :created, location: @user
-        else
-          render json: @user.errors, status: :unprocessable_entity
-        end
-      else
-        render json: {error: 'Invalid params'}, status: :bad_request
-      end
-    rescue ActiveRecord::NotNullViolation
-      render json: {error: "Invalid params"}, status: :bad_request
-    end
   end
 
   # PATCH/PUT /users/1

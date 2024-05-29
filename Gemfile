@@ -9,6 +9,7 @@ gem "jwt"
 gem "dotenv"
 gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
+gem 'stripe'
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]

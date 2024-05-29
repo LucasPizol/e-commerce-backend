@@ -9,7 +9,11 @@ class ApplicationController < ActionController::API
       header = request.headers['Authorization']
       token = header.split(' ')[1] if header
 
-      decoded = TokenService.decode(token)
+      if token.nil?
+        return render json: { error: 'Unauthorized' }, status: :unauthorized
+      end
+
+      decoded = TokenService.new.decode(token)
 
       if decoded.nil?
         return render json: { error: 'Unauthorized' }, status: :unauthorized

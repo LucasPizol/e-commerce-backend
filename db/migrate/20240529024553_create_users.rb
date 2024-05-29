@@ -8,7 +8,8 @@ class CreateUsers < ActiveRecord::Migration[7.1]
       t.string :document, null: false
       t.string :password_digest
       t.string :role, null: false, default: 'user'
-
+      t.string :stripe_id
+      
       t.timestamps
     end
   end
