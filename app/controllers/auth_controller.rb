@@ -16,7 +16,7 @@ class AuthController < ApplicationController
     private
   
     def encode_token(payload)
-      JWT.encode(payload, 'your_secret_key')
+      JWT.encode(payload, ENV["JWT_SECRET"])
     end
   end
   

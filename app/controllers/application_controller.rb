@@ -1,3 +1,7 @@
+
+require 'dotenv'
+Dotenv.load
+
 class ApplicationController < ActionController::API
     before_action :authorized
 
@@ -5,8 +9,9 @@ class ApplicationController < ActionController::API
     def authorized
       header = request.headers['Authorization']
       token = header.split(' ')[1] if header
+
       begin
-        decoded = JWT.decode(token, 'your_secret_key', true, algorithm: 'HS256')
+        decoded = JWT.decode(token, ENV["JWT_SECRET"], true, algorithm: ENV["JWT_HASH_ALGORITHM"])
 
         id = decoded[0]['id']
         @current_user = User.find(id)
