@@ -15,8 +15,18 @@ class AuthUseCase
 
         user = user_credential.include?('@') ? @user_repo.find_by(email: user_credential) : @user_repo.find_by(username: user_credential)
         
+        
         if user && user.authenticate(password)
-            user_object = {id: user.id, name: user.name, email: user.email, phone: user.phone, document: user.document, role: user.role}
+            user_object = {
+                id: user.id,
+                name: user.name,
+                email: user.email,
+                phone: user.phone,
+                document: user.document,
+                role: user.role, 
+                stripe_id: user.id
+            }
+            
             token = @token_service.encode(user_object)
 
             if (token.nil?)

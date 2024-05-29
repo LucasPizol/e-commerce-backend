@@ -7,12 +7,8 @@ class RegisterController < ApplicationController
     end
   
     def register
-      @user = User.new(user_params)
-
-      puts @user.inspect
-  
       begin
-        render json: @register_use_case.register(@user), status: :created
+        render json: @register_use_case.register(user_params), status: :created
       rescue UnprocessableEntityException => e
         render json: {error: e.message}, status: e.status
       rescue BadRequestException => e

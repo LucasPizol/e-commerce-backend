@@ -2,12 +2,6 @@ class UsersController < ApplicationController
   before_action :set_user, only: %i[ show update destroy ]
   skip_before_action :authorized, only: [:index, :create]
 
-  require './app/use_cases/auth/register_use_case'
-
-  def initialize 
-    @register_use_case = RegisterUseCase.new
-  end
-
   # GET /users
   def index
     @users = User.all
