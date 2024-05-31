@@ -7,13 +7,14 @@ class TokenService
         end
     end
 
-    def encode(payload)
+    def encode(payload, expiration = 24.hours.from_now.to_i)
+        payload[:exp] = expiration
         JWT.encode(payload, @secret_key)
     end
     
     def decode(token)
         begin
-            return JWT.decode(token, @secret_key, true, algorithm: @algorithm)
+            return JWT.decode(token, @secret_key, true)
         rescue JWT::DecodeError
             return nil
         end

@@ -7,7 +7,7 @@ class PaymentController < ApplicationController
 
     def checkout
         begin
-            render json: @checkout_use_case.checkout(@current_user, params[:price_id]), status: :ok
+            render json: @checkout_use_case.checkout(@current_user, params[:line_items]), status: :ok
         rescue BadRequestException => e
             render json: {error: e.message}, status: e.status
         rescue => e
@@ -16,6 +16,6 @@ class PaymentController < ApplicationController
     end
 
     def payment_params
-        params.require(:payment).permit(:price_id)
+        params.permit(:line_items)
     end
 end

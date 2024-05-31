@@ -1,53 +1,35 @@
 class ProductsController < ApplicationController
-  before_action :set_product, only: %i[ show update destroy ]
-  skip_before_action :authorized, only: [:index, :show]
-  before_action :permission_admin, only: [:create, :update, :destroy]
+    require "./app/use_cases/product/list_products_use_case"
+    require "./app/use_cases/product/create_product_use_case"
 
-  # GET /products
-  def index
-    @products = Product.all
+    before_action :authorized, except: [:list, :create]
 
-    render json: @products
-  end
-
-  # GET /products/1
-  def show
-    render json: @product
-  end
-
-  # POST /products
-  def create
-    @product = Product.new(product_params)
-
-    if @product.save
-      render json: @product, status: :created, location: @product
-    else
-      render json: @product.errors, status: :unprocessable_entity
-    end
-  end
-
-  # PATCH/PUT /products/1
-  def update
-    if @product.update(product_params)
-      render json: @product
-    else
-      render json: @product.errors, status: :unprocessable_entity
-    end
-  end
-
-  # DELETE /products/1
-  def destroy
-    @product.destroy!
-  end
-
-  private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_product
-      @product = Product.find(params[:id])
+    def initialize
+        @list_products_use_case = Product::ListProductsUseCase.new
+        @create_product_use_case = Product::CreateProductUseCase.new
     end
 
-    # Only allow a list of trusted parameters through.
+    def list
+        begin
+            ids=params[:ids]
+            products = @list_products_use_case.list_products(ids)
+            
+            render json: products, status: :ok
+        rescue => e
+            render json: {error: e.message}, status: :internal_server_error
+        end
+    end
+
+    def create
+        begin
+            product = @create_product_use_case.create(product_params)
+            render json: product, status: :created
+        rescue => e
+            render json: {error: e.message}, status: e.status
+        end
+    end
+
     def product_params
-      params.require(:product).permit(:name, :description, :tags, :createdAt, :updatedAt, :price)
+        params.require(:product).permit(:name, :description, :price, images: [])
     end
 end

@@ -20,7 +20,7 @@ class RegisterController < ApplicationController
     private
 
     def user_params
-        params.require(:user).permit(:username, :password, :password_confirmation, :name, :email, :phone, :document, :role)
-      end
+        params.require(:user).permit(:username, :password, :password_confirmation, :name, :email, :phone, :document)
+    end
   end
     
