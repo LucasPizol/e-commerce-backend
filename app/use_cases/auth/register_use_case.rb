@@ -10,8 +10,6 @@ class RegisterUseCase
     end
 
     def register(user_params)
-        puts "paramsss"
-        puts (user_params)
         if (user_params[:password] != user_params[:password_confirmation])
             raise UnprocessableEntityException.new("Password and password confirmation don't match")
         end

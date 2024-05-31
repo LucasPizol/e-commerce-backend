@@ -1,5 +1,5 @@
 class StripeService 
-    def create_checkout_session(user, prices, success_url, cancel_url)
+    def create_checkout_session(user, prices, success_url, cancel_url, expires_at)
         if !user.stripe_id || !prices
             raise BadRequestException.new('Price ID or Stripe ID is missing')
         end
@@ -19,7 +19,7 @@ class StripeService
 
         session = Stripe::Checkout::Session.create( 
             customer: customer, 
-            payment_method_types: ["card"],
+            payment_method_types: ["card", "boleto"],
             line_items: line_items,
             mode: 'payment',
             success_url: success_url,
@@ -27,8 +27,9 @@ class StripeService
             metadata: {
                 user_id: user.id,
                 line_items: line_items.to_s
-            }
-            )  
+            },
+            expires_at: expires_at
+        )  
         return session
     end
 
@@ -43,8 +44,17 @@ class StripeService
         return customer
     end
 
+    def retrieve_order(order_id)
+        Stripe::Checkout::Session.retrieve(order_id)
+    end
+
     def create_product(product)
-        new_product = Stripe::Product.create({name: product[:name], description: product[:description], images: product[:images], metadata: product[:metadata]})
+        new_product = Stripe::Product.create({
+            name: product[:name],
+            description: product[:description],
+            images: product[:images] || [],
+            metadata: product[:metadata]
+        })
 
         price = create_price(product[:price].to_f, new_product.id)
 
@@ -54,51 +64,46 @@ class StripeService
     end
 
     def load_orders(user)
-        orders = Stripe::Checkout::Session.list(customer: user.stripe_id)
-        prices = list_price().data
-
-        rejected_orders = orders[:data].reject { |order| order[:metadata][:line_items].nil? }.map do |order|
-            string = order[:metadata][:line_items]
-            string = string.gsub(/:(\w+)=>/, '"\1":')
-            {
-                id: order[:id],
-                status: order[:payment_status],
-                created_at: order[:created],
-                payment_method_types: order[:payment_method_types],
-                total_details: order[:total_details],
-                amount_total: order[:amount_total].to_f / 100,
-                line_items: JSON.parse(string)
-            }
-        end
-
-        prices_id = rejected_orders.map do |order|
-            order[:line_items].map  do |item| 
-                {id: item["price"], quantity: item["quantity"]}
+        begin
+            orders = Stripe::Checkout::Session.list(customer: user.stripe_id)
+            prices = list_price().data
+    
+            rejected_orders = orders[:data].reject { |order| order[:metadata][:line_items].nil? }.map do |order|
+                line_items_json = order[:metadata][:line_items].gsub(/:(\w+)=>/, '"\1":')
+                line_items = JSON.parse(line_items_json)
+                {
+                    id: order[:id],
+                    status: order[:payment_status],
+                    created_at: order[:created],
+                    payment_method_types: order[:payment_method_types],
+                    total_details: order[:total_details],
+                    amount_total: order[:amount_total].to_f / 100,
+                    line_items: line_items
+                }
             end
-        end
-
-        products_ids = prices_id.flatten.map do |item|
-            id = prices.find { |price| price[:id] == item[:id] }[:product]
-
-            {id: id, quantity: item[:quantity]}
-        end 
-
-        products = list_products_by_ids(products_ids.map{|item| item[:id]}, prices)  
-        
-        return rejected_orders.map do |order|
-            products = order[:line_items].map do |item|
-                product = products.find { |product| product[:price][:id] == item["price"] }
-                quantity = products_ids.find{ |data| data[:id] == product[:id] }[:quantity]
-
-                {**product, quantity: quantity}
+    
+            prices_id = rejected_orders.flat_map { |order| order[:line_items].map { |item| { id: item["price"], quantity: item["quantity"] } } }
+    
+            products_ids = prices_id.map do |item|
+                id = prices.find { |price| price[:id] == item[:id] }[:product]
+                { id: id, quantity: item[:quantity] }
+            end 
+    
+            products = list_products_by_ids(products_ids.map { |item| item[:id] }, prices)  
+    
+            rejected_orders.map do |order|
+                order_products = order[:line_items].map do |item|
+                    product = products.find { |prod| prod[:price][:id] == item["price"] }
+                    quantity = products_ids.find { |data| data[:id] == product[:id] }[:quantity]
+                    { **product, quantity: quantity }
+                end
+                { **order, products: order_products, line_items: nil}
             end
-            {
-                **order,
-                line_items: nil,
-                products: products
-            }
+        rescue StandardError
+            []
         end
     end
+    
 
     def list_products(prices)
         products = Stripe::Product.list(active: true)

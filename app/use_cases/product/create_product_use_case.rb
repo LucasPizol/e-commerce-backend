@@ -9,17 +9,22 @@ class Product::CreateProductUseCase
 
     def create(product_params)
 
+
         images = []
 
         if product_params[:images]
             product_params[:images].map do |image|
-                images.push(@aws_service.insert(image, "products/#{product_params[:name]}/#{image.original_filename}"))
+                extension = File.extname(image.original_filename)
+                images.push(@aws_service.insert(image, "products/#{product_params[:name].parameterize}/#{image.original_filename.gsub(extension, "")}-#{SecureRandom.uuid}#{extension}"))
             end
         end
 
-        stripe_product = @stripe_service.create_product({**product_params, images: images})
-
-        return stripe_product
+        @stripe_service.create_product({
+            name: product_params["name"],
+            description: product_params["description"],
+            metadata: product_params["metadata"],
+            price: product_params["price"],
+            images: images
+        })
     end
-
 end

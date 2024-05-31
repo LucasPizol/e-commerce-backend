@@ -25,7 +25,7 @@ class ProductsController < ApplicationController
             product = @create_product_use_case.create(product_params)
             render json: product, status: :created
         rescue => e
-            render json: {error: e.message}, status: e.status
+            render json: {error: e.message}, status: :internal_server_error
         end
     end
 

@@ -2,13 +2,18 @@ Rails.application.routes.draw do
   post 'login', to: 'auth#login'
   get 'auth', to: 'auth#verify'
   post 'register', to: 'register#register'
+  
   post 'checkout', to: 'payment#checkout'
+
   post 'products', to: 'products#create'
   get 'products', to: 'products#list'
-  delete "/carts/clear", to: 'carts#clear'
-  put 'users', to: 'users#update'
 
+  delete "/carts/clear", to: 'carts#clear'
+  
+  put 'users', to: 'users#update'
+  
   get "orders", to: "orders#index"
+  get 'orders/:id', to: 'orders#retrieve'
 
   resources :carts
 

@@ -10,7 +10,6 @@ class Product::ListProductsUseCase
         end
 
         prices = @stripe_service.list_price()
-        puts prices
 
         list_products = @stripe_service.list_products(prices)
 
