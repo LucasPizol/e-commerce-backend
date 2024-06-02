@@ -9,8 +9,6 @@ class Cart::LoadCartUseCase
 
         carts = Cart.all.where(user_id: user_id)
 
- 
-
         prices = @stripe_service.list_price().data
 
         cart_with_aggregation = @stripe_service.list_products_by_ids(carts.map(&:stripe_product_id), prices)
@@ -24,7 +22,7 @@ class Cart::LoadCartUseCase
         cart_with_aggregation.map do |product|
           cart = carts.find { |cart| cart.stripe_product_id == product[:id] }
           {
-            **cart,
+            **cart.as_json,
             price: product[:price],
             name: product[:name],
             description: product[:description],
