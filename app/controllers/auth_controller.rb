@@ -22,6 +22,7 @@ class AuthController < ApplicationController
   def login
     begin
       response = @auth_usecase.login(user_params[:user_credential], user_params[:password])
+
       cart = @load_cart_use_case.load(response[:id])
 
       render json: {user: response, cart: cart}, status: :ok

@@ -8,8 +8,6 @@ class Product::CreateProductUseCase
     end
 
     def create(product_params)
-
-
         images = []
 
         if product_params[:images]

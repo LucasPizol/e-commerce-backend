@@ -53,7 +53,7 @@ class StripeService
             name: product[:name],
             description: product[:description],
             images: product[:images] || [],
-            metadata: product[:metadata]
+            metadata: {**product[:metadata]}
         })
 
         price = create_price(product[:price].to_f, new_product.id)
@@ -67,7 +67,7 @@ class StripeService
         begin
             orders = Stripe::Checkout::Session.list(customer: user.stripe_id)
             prices = list_price().data
-    
+
             rejected_orders = orders[:data].reject { |order| order[:metadata][:line_items].nil? }.map do |order|
                 line_items_json = order[:metadata][:line_items].gsub(/:(\w+)=>/, '"\1":')
                 line_items = JSON.parse(line_items_json)
@@ -104,7 +104,6 @@ class StripeService
         end
     end
     
-
     def list_products(prices)
         products = Stripe::Product.list(active: true)
 
@@ -142,7 +141,14 @@ class StripeService
         id,
         {**data},
         )
-     end
+    end
+
+    def update_product(id, data)
+        Stripe::Product.update(
+            id,
+            {**data}
+        )
+    end
 
     def list_price()
        Stripe::Price.list()

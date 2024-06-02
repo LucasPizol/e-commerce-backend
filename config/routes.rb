@@ -7,6 +7,7 @@ Rails.application.routes.draw do
 
   post 'products', to: 'products#create'
   get 'products', to: 'products#list'
+  put "products/:id", to: "products#update"
 
   delete "/carts/clear", to: 'carts#clear'
   
@@ -14,6 +15,7 @@ Rails.application.routes.draw do
   
   get "orders", to: "orders#index"
   get 'orders/:id', to: 'orders#retrieve'
+
 
   resources :carts
 
