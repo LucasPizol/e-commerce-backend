@@ -21,10 +21,10 @@ class Cart::LoadCartUseCase
         end
 
 
-        carts.map do |cart|
-          product = cart_with_aggregation.find { |product| product[:id] == cart.stripe_product_id }
+        cart_with_aggregation.map do |product|
+          cart = carts.find { |cart| cart.stripe_product_id == product[:id] }
           {
-            **cart.as_json,
+            **cart,
             price: product[:price],
             name: product[:name],
             description: product[:description],
