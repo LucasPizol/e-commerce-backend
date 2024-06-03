@@ -1,4 +1,4 @@
-class CheckoutUseCase 
+class Payment::CheckoutUseCase 
 
     require './app/services/stripe_service'
     require './app/services/token_service'

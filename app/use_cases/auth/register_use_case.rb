@@ -1,9 +1,4 @@
-class RegisterUseCase 
-    require './app/services/token_service'
-    require './app/services/stripe_service'
-    require './app/exceptions/bad_request_exception.rb'
-    require './app/exceptions/unprocessable_entity_exception.rb'
-
+class Auth::RegisterUseCase 
     def initialize
         @token_service = TokenService.new
         @stripe_service = StripeService.new

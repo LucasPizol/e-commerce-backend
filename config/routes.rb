@@ -1,30 +1,23 @@
 Rails.application.routes.draw do
-  post 'login', to: 'auth#login'
-  get 'auth', to: 'auth#verify'
-  post 'register', to: 'register#register'
+  post 'auth/login', to: 'auth/login#handle'
+  post 'auth/register', to: 'auth/register#handle'
+  get 'auth/verify', to: 'auth/verify#handle'
   
-  post 'checkout', to: 'payment#checkout'
+  post 'checkout', to: 'payment/create_checkout#handle'
 
-  post 'products', to: 'products#create'
-  get 'products', to: 'products#list'
-  put "products/:id", to: "products#update"
+  post 'products', to: 'product/create_product#handle'
+  get 'products', to: 'product/load_products#handle'
+  put "products/:id", to: "product/update_product#handle"
 
-  delete "/carts/clear", to: 'carts#clear'
+  post "carts", to: "cart/add_cart#handle"
+  get "carts", to: "cart/load_carts#handle"
+  put "carts/:id", to: "cart/add_cart#handle"
+  delete "carts/clear", to: 'carts/clear#handle'
+
+  put 'users', to: 'user/update_user#update'
   
-  put 'users', to: 'users#update'
-  
-  get "orders", to: "orders#index"
-  get 'orders/:id', to: 'orders#retrieve'
+  get "orders", to: "order/load_orders#handle"
+  get 'orders/:id', to: 'order/retrieve_order#handle'
 
-
-  resources :carts
-
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
-  # Reveal health status on /up that returns 200 if the app boots with no exceptions, otherwise 500.
-  # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
-
-  # Defines the root path route ("/")
-  # root "posts#index"
 end

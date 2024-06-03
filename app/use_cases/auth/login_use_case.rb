@@ -1,10 +1,7 @@
-class AuthUseCase 
-    require './app/models/user'
-    require './app/services/token_service'
-    require './app/exceptions/unauthorized_exception.rb'
-
+class Auth::LoginUseCase 
     def initialize
         @token_service = TokenService.new
+        @load_cart_use_case = Cart::LoadCartUseCase.new
         @user_repo = User
     end
 
@@ -17,6 +14,8 @@ class AuthUseCase
         
         
         if user && user.authenticate(password)
+            cart = @load_cart_use_case.load(user.id)
+
             user_object = {
                 id: user.id,
                 name: user.name,
@@ -33,7 +32,7 @@ class AuthUseCase
                 raise 'Token could not be generated'
             end
 
-            return {**user_object, token: token}
+            return ({user: {**user_object, token: token}, cart: cart})
         else
             raise UnauthorizedException.new('Invalid email or password')
         end

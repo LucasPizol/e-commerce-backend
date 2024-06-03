@@ -1,11 +1,9 @@
-class PaymentController < ApplicationController
-    require './app/use_cases/payment/checkout_use_case'
-
+class Payment::CreateCheckoutController < ApplicationController
     def initialize
-        @checkout_use_case = CheckoutUseCase.new
+        @checkout_use_case = Payment::CheckoutUseCase.new
     end
 
-    def checkout
+    def handle
         begin
             render json: @checkout_use_case.checkout(@current_user, params[:line_items]), status: :ok
         rescue BadRequestException => e

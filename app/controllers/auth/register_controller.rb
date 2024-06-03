@@ -1,12 +1,11 @@
-class RegisterController < ApplicationController
-    skip_before_action :authorized, only: [:register]
-    require './app/use_cases/auth/register_use_case'
+class Auth::RegisterController < ApplicationController
+    skip_before_action :authorized, only: [:handle]
   
     def initialize
-      @register_use_case = RegisterUseCase.new
+      @register_use_case = Auth::RegisterUseCase.new
     end
   
-    def register
+    def handle
       begin
         render json: @register_use_case.register(user_params), status: :created
       rescue UnprocessableEntityException => e
