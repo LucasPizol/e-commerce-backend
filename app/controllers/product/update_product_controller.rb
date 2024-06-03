@@ -5,7 +5,7 @@ class Product::UpdateProductController < ApplicationController
         @update_product_use_case = Product::UpdateProductUseCase.new
     end
 
-    def update
+    def handle
         begin
             product = @update_product_use_case.update_product(params[:id], product_params)
             render json: product, status: :ok

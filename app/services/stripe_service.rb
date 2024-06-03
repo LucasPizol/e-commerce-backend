@@ -132,7 +132,7 @@ class StripeService
                 value: price[:unit_amount].to_f / 100
             },
             images: product[:images],
-            metadata: product[:metadata]
+            metadata: {**product[:metadata], categories: product[:metadata][:categories] ?  product[:metadata][:categories].split(',') : []}
         }
     end
 
@@ -144,6 +144,8 @@ class StripeService
     end
 
     def update_product(id, data)
+        puts "data", data
+
         Stripe::Product.update(
             id,
             {**data}
