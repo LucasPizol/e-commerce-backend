@@ -2,7 +2,7 @@ class Product::LoadProductsController < ApplicationController
     before_action :authorized, except: [:handle]
 
     def initialize
-        @load_products_use_case = Product::ListProductsUseCase.new
+        @load_products_use_case = Product::LoadProductsUseCase.new
     end
 
     def handle

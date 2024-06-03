@@ -1,4 +1,4 @@
-class ProductsController < ApplicationController
+class Product::UpdateProductController < ApplicationController
     before_action :permission_admin
 
     def initialize

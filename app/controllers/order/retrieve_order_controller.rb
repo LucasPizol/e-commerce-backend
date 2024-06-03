@@ -1,7 +1,4 @@
 class Order::RetrieveOrderController < ApplicationController
-    require './app/use_cases/order/load_orders_use_case'
-    require './app/use_cases/order/retrieve_order_use_case'
-
     def initialize
         @retrieve_order_use_case = Order::RetrieveOrderUseCase.new
     end

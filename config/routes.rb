@@ -11,10 +11,11 @@ Rails.application.routes.draw do
 
   post "carts", to: "cart/add_cart#handle"
   get "carts", to: "cart/load_carts#handle"
-  put "carts/:id", to: "cart/add_cart#handle"
+  put "carts/:id", to: "cart/update_cart#handle"
+  delete "carts/:id", to: "cart/delete_cart#handle"
   delete "carts/clear", to: 'carts/clear#handle'
 
-  put 'users', to: 'user/update_user#update'
+  put 'users', to: 'user/update_user#handle'
   
   get "orders", to: "order/load_orders#handle"
   get 'orders/:id', to: 'order/retrieve_order#handle'

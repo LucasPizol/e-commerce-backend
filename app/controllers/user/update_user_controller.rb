@@ -2,6 +2,7 @@ class User::UpdateUserController < ApplicationController
     def handle
       if @current_user.update(user_params)
         render json: {
+            id: @current_user.id,
             name: @current_user.name,
             email: @current_user.email,
             phone: @current_user.phone,

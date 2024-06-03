@@ -1,6 +1,8 @@
-class Cart::UpdateCartController < ApplicationController  
-    def update
-        if @cart.update(cart_params)
+class Cart::UpdateCartController < ApplicationController
+    def handle
+        cart = Cart.find(params[:id])
+
+        if cart.update(cart_params)
             render json: @cart
         else
             render json: @cart.errors, status: :unprocessable_entity
