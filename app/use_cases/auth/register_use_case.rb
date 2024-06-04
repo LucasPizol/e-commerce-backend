@@ -1,7 +1,8 @@
 class Auth::RegisterUseCase 
-    def initialize
+    def initialize(token_service: TokenService, stripe_service: StripeService, user_repo: User)
         @token_service = TokenService.new
         @stripe_service = StripeService.new
+        @user_repo = user_repo
     end
 
     def register(user_params)
@@ -9,7 +10,7 @@ class Auth::RegisterUseCase
             raise UnprocessableEntityException.new("Password and password confirmation don't match")
         end
 
-        user = User.new(user_params)
+        user = @user_repo.new(user_params)
 
         begin
             if user.save

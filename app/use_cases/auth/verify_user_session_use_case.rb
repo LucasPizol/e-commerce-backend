@@ -1,6 +1,6 @@
 class Auth::VerifyUserSessionUseCase
-    def initialize
-        @load_cart_use_case = Cart::LoadCartUseCase.new
+    def initialize(load_cart_use_case: LoadCartUseCase)
+        @load_cart_use_case = load_cart_use_case
     end
 
 

@@ -1,19 +1,19 @@
 Rails.application.routes.draw do
-  post 'auth/login', to: 'auth/login#handle'
-  post 'auth/register', to: 'auth/register#handle'
-  get 'auth/verify', to: 'auth/verify#handle'
+  post 'auth/login', to: 'auth#login'
+  post 'auth/register', to: 'auth#register'
+  get 'auth/verify', to: 'auth#verify'
   
   post 'checkout', to: 'payment/create_checkout#handle'
 
-  post 'products', to: 'product/create_product#handle'
-  get 'products', to: 'product/load_products#handle'
-  put "products/:id", to: "product/update_product#handle"
+  post 'products', to: 'product#add'
+  get 'products', to: 'product#index'
+  put "products/:id", to: "product#update"
 
-  post "carts", to: "cart/add_cart#handle"
-  get "carts", to: "cart/load_carts#handle"
-  put "carts/:id", to: "cart/update_cart#handle"
-  delete "carts/:id", to: "cart/delete_cart#handle"
-  delete "carts/clear", to: 'carts/clear#handle'
+  post "carts", to: "cart#add"
+  get "carts", to: "cart#index"
+  put "carts/:id", to: "cart#update"
+  delete "carts/:id", to: "cart#delete"
+  delete "carts/clear", to: 'cart#clear'
 
   put 'users', to: 'user/update_user#handle'
   

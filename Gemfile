@@ -14,6 +14,7 @@ gem "tzinfo-data", platforms: %i[ windows jruby ]
 gem "bootsnap", require: false
 gem 'stripe'
 gem 'aws-sdk-s3'
+gem "rspec"
 
 group :development, :test do
   gem "debug", platforms: %i[ mri windows ]

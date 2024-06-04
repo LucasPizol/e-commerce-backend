@@ -1,8 +1,8 @@
 class Auth::LoginUseCase 
-    def initialize
-        @token_service = TokenService.new
-        @load_cart_use_case = Cart::LoadCartUseCase.new
-        @user_repo = User
+    def initialize(token_service: TokenService, load_cart_use_case: Cart::LoadCartUseCase, user_repo: User)
+        @token_service =token_service
+        @load_cart_use_case = load_cart_use_case
+        @user_repo = user_repo
     end
 
     def login(user_credential, password)

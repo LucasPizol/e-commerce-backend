@@ -2,9 +2,9 @@ class Product::CreateProductUseCase
     require './app/services/stripe_service'
     require './app/services/aws_service'
 
-    def initialize
-        @stripe_service = StripeService.new
-        @aws_service = AwsService.new
+    def initialize(stripe_service: StripeService, aws_service: AwsService)
+        @stripe_service = stripe_service
+        @aws_service = aws_service
     end
 
     def create(product_params)
@@ -13,7 +13,8 @@ class Product::CreateProductUseCase
         if product_params[:images]
             product_params[:images].map do |image|
                 extension = File.extname(image.original_filename)
-                images.push(@aws_service.insert(image, "products/#{product_params[:name].parameterize}/#{image.original_filename.gsub(extension, "")}-#{SecureRandom.uuid}#{extension}"))
+                image = @aws_service.insert(image, "products/#{product_params[:name].parameterize}/#{image.original_filename.gsub(extension, "")}-#{SecureRandom.uuid}#{extension}")
+                images.push(image)
             end
         end
 
